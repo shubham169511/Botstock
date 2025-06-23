@@ -4,4 +4,10 @@ numpy
 matplotlib
 yfinance
 TA-Lib
-pandas-datareader
+pandas-ta
+textblob
+feedparser
+requests
+Flask
+nltk
+gunicorn
