@@ -250,3 +250,36 @@ class OptionScanner:
         
         # Format news headlines
         news_headlines = "\n- ".join(self.sentiment_data.get('news',
+# ... (keep all previous code)
+
+def run_telegram_bot():
+    """Run Telegram bot in polling mode"""
+    TOKEN = BOT_TOKEN
+    updater = Updater(TOKEN, use_context=True)
+    dp = updater.dispatcher
+
+    # Command handlers
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("signal", signal_command))
+    dp.add_handler(CommandHandler("auto", enable_auto))
+    dp.add_handler(CommandHandler("stop", disable_auto))
+    dp.add_error_handler(error)
+
+    # Start the Bot in polling mode
+    updater.start_polling()
+    logger.info("Telegram bot started in polling mode")
+    scanner.scan_market()
+    updater.idle()
+
+def run_flask_app():
+    """Run Flask app for health checks"""
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
+
+if __name__ == '__main__':
+    # Start Telegram bot in a separate thread
+    bot_thread = threading.Thread(target=run_telegram_bot, daemon=True)
+    bot_thread.start()
+    
+    # Start Flask app in the main thread
+    run_flask_app()
